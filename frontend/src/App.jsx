@@ -8,6 +8,7 @@ import Home from './pages/Home.jsx';
 import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
 import Planning from './pages/Planning.jsx';
+import Profil from './pages/Profil.jsx';
 function App() {
   const { loading } = useAuth();
   if (loading) return <div><p>Chargement...</p></div>;
@@ -20,6 +21,9 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/planning" element={
           <PrivateRoute><Planning /></PrivateRoute>
+        } />
+        <Route path="/profil" element={
+          <PrivateRoute><Profil /></PrivateRoute>
         } />
       </Route>
       {/* Routes SANS Header (plein écran) */}
