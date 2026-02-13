@@ -12,7 +12,7 @@ const generateToken = (user) => {
 // POST /api/auth/register
 export const register = async (req, res) => {
     try {
-        const { email, password, firstname, lastname } = req.body;
+        const { email, password } = req.body;
         if (!email || !password) {
             return res.status(400).json({ error: 'Email et mot de passe requis' });
         }
@@ -20,7 +20,7 @@ export const register = async (req, res) => {
         if (existingUser) {
             return res.status(409).json({ error: 'Email déjà utilisé' });
         }
-        const user = await User.create({ email, password, firstname, lastname });
+        const user = await User.create({ email, password });
         const token = generateToken(user);
         res.status(201).json({ message: 'Inscription réussie', user, token });
     } catch (error) {
@@ -37,7 +37,7 @@ export const login = async (req, res) => {
         }
         const token = generateToken(user);
         res.json({
-            user: { id: user.id, email: user.email, firstname: user.firstname, lastname: user.lastname },
+            user: { id: user.id, email: user.email },
             token
         });
     } catch (error) {

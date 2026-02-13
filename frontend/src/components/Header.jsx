@@ -1,6 +1,8 @@
 // components/Header.jsx
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.js';
+import logo from '../assets/icons/logo techspace.webp';
+
 function Header() {
     const { user, isAuthenticated, logout } = useAuth();
     const navigate = useNavigate();
@@ -12,7 +14,7 @@ function Header() {
         <header className="bg-blue-600 text-white shadow-lg">
             <div className="container mx-auto px-4 py-4 flex justify-between items-center">
                 <Link to="/" className="text-2xl font-bold hover:text-blue-200 transition">
-                    Starter Kit
+                    <img src={logo} alt="Logo" className="h-14 inline-block mr-2" />
                 </Link>
                 <nav className="flex gap-6 items-center">
                     <NavLink
@@ -25,12 +27,12 @@ function Header() {
                     </NavLink>
                     {isAuthenticated && (
                         <NavLink
-                            to="/dashboard"
+                            to="/planning"
                             className={({ isActive }) =>
                                 `hover:text-blue-200 transition ${isActive ? 'font-bold' : ''}`
                             }
                         >
-                            Dashboard
+                            Planning
                         </NavLink>
                     )}
                 </nav>

@@ -1,8 +1,50 @@
 /* 1 seule ligne ! */
 @import "tailwindcss";
+
 /* Classes réutilisables (optionnel) */
 @layer components {
-.btn { @apply px-6 py-2 rounded-lg font-medium transition-all; }
-.btn-primary { @apply bg-indigo-600 text-white hover:bg-indigo-700; }
-.form-input { @apply w-full px-4 py-2 border-2 rounded-lg; }
+  .btn { @apply px-6 py-2 rounded-lg font-medium transition-all; }
+  .btn-primary { @apply bg-indigo-600 text-white hover:bg-indigo-700; }
+  .form-input { @apply w-full px-4 py-2 border-2 rounded-lg; }
+}
+
+/* Styles minimaux pour FullCalendar - structure de base */
+@layer base {
+  .fc { display: block; position: relative; }
+  .fc-view-harness { flex-grow: 1; position: relative; }
+  .fc-scrollgrid { border-collapse: separate; width: 100%; }
+  .fc-scrollgrid th, .fc-scrollgrid td { border-style: solid; border-width: 1px 0 0 1px; }
+  .fc-header-toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5em; }
+  .fc-toolbar-chunk { display: flex; align-items: center; gap: 0.5em; }
+  .fc-button { border-radius: 4px; padding: 0.4em 0.8em; font-size: 1em; line-height: 1.5; border: 1px solid; cursor: pointer; margin: 0 2px; }
+  .fc-button:disabled { cursor: not-allowed; }
+  .fc-toolbar-title { font-size: 1.75em; margin: 0; }
+  .fc-daygrid-day-frame { position: relative; min-height: 100%; }
+  .fc-daygrid-day-top { display: flex; flex-direction: row-reverse; }
+  .fc-daygrid-day-number { position: relative; z-index: 4; padding: 4px; }
+  .fc-col-header-cell { padding: 8px 4px; text-align: center; }
+  .fc-daygrid-event { position: relative; white-space: nowrap; border-radius: 3px; font-size: 0.85em; padding: 2px 4px; margin: 1px; }
+  .fc-daygrid-event-harness { position: absolute; left: 0; right: 0; }
+  .fc-daygrid-block-event { display: block; }
+  .fc-daygrid-day-events { margin-top: 1px; }
+  .fc-event { display: block; border: 1px solid; text-decoration: none; }
+  .fc-event-main { position: relative; z-index: 2; }
+  .fc-event-title { overflow: hidden; }
+}
+
+/* Personnalisation avec couleurs Tailwind */
+@layer utilities {
+  .fc { @apply font-sans; }
+  .fc-toolbar-title { @apply text-2xl font-bold text-gray-900; }
+  .fc-button { @apply bg-blue-600 border-blue-600 text-white font-medium hover:bg-blue-700 hover:border-blue-700 disabled:opacity-50; }
+  .fc-button-active { @apply bg-blue-800 border-blue-800; }
+  .fc-col-header-cell { @apply bg-gray-50 font-semibold uppercase text-xs text-gray-600; }
+  .fc-daygrid-day { @apply cursor-pointer transition-colors hover:bg-gray-50; }
+  .fc-daygrid-day-frame { @apply min-h-20; }
+  .fc-daygrid-day-number { @apply p-2 font-medium; }
+  .fc-event { @apply font-semibold border-2; }
+  .fc-event-main { @apply p-1; }
+  .fc-scrollgrid, .fc-theme-standard td, .fc-theme-standard th { @apply border-gray-200; }
+  .fc-day-today { @apply bg-yellow-50; }
+  .fc-day-past { @apply bg-gray-50/50; }
 }

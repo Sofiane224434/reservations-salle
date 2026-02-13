@@ -13,13 +13,6 @@
 # Installation Backend
 cd backend
 npm install
-# Créer un fichier .env avec vos configurations
-# DB_HOST=localhost
-# DB_USER=root
-# DB_PASSWORD=
-# DB_NAME=starter_kit
-# JWT_SECRET=votre_secret_jwt
-# PORT=5000
 npm run dev
 
 # Installation Frontend (dans un nouveau terminal)
@@ -250,7 +243,7 @@ psql -U username -d database_name -f schema.sql
 cd backend
 npm run dev
 
-# Terminal 2 - Frontend
+# Terminal 2 - Frontend  
 cd frontend
 npm run dev
 ```

@@ -7,23 +7,23 @@ import PrivateRoute from './components/PrivateRoute.jsx';
 import Home from './pages/Home.jsx';
 import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
-import Dashboard from './pages/Dashboard.jsx';
+import Planning from './pages/Planning.jsx';
 function App() {
   const { loading } = useAuth();
   if (loading) return <div><p>Chargement...</p></div>;
   return (
     <Routes>
-    {/* Routes AVEC Header + Footer */}
+      {/* Routes AVEC Header + Footer */}
       <Route element={<MainLayout />}>
-      <Route path="/" element={<Home />} />
-      <Route path="/dashboard" element={
-        <PrivateRoute><Dashboard /></PrivateRoute>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/planning" element={
+          <PrivateRoute><Planning /></PrivateRoute>
         } />
       </Route>
       {/* Routes SANS Header (plein écran) */}
       <Route element={<AuthLayout />}>
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
       </Route>
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
