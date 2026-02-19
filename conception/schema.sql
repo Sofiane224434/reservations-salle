@@ -61,3 +61,12 @@ COLLATE = utf8mb4_0900_ai_ci;
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
+-----------------------------------------------------
+-- jeu de données
+-- -----------------------------------------------------
+
+INSERT INTO `reservation_salles`.`users` (`id`, `email`, `password`, `created_at`) VALUES (1, 'admin@reservation-salle.fr', 'admin', '2026-02-09 13:15:26');
+INSERT INTO `reservation_salles`.`users` (`id`, `email`, `password`, `created_at`) VALUES (2, 'user@reservation-salle.fr', 'user', '2026-02-09 13:15:26');
+INSERT INTO `reservation_salles`.`reservations` (`id`, `titre`, `description`, `debut`, `fin`, `created_at`, `users_id`) VALUES (1, 'Réunion de projet', 'Discussion sur les étapes du projet', '2026-02-10 10:00:00', '2026-02-10 11:00:00', '2026-02-09 13:15:26', 1);
+INSERT INTO `reservation_salles`.`reservations` (`id`, `titre`, `description`, `debut`, `fin`, `created_at`, `users_id`) VALUES (2, 'Formation', 'Session de formation pour les nouveaux employés', '2026-02-11 14:00:00', '2026-02-11 16:00:00', '2026-02-09 13:15:26', 2);
