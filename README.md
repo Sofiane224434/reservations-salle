@@ -1,4 +1,4 @@
-# Starter Kit - Application Fullstack
+﻿# Réservation de Salle
 
 ## � Démarrage Rapide
 
@@ -31,18 +31,17 @@ cp /backend/.env.example /backend/.env cp /frontend/.env.example /frontend/.env
 
 ---
 
-## �📋 Description
+## 📋 Description
 
-Projet fullstack moderne avec architecture découplée, comprenant un backend API REST et un frontend React. L'application propose un système d'authentification complet avec gestion des utilisateurs.
+Application fullstack de réservation de salles de réunion pour une entreprise. Elle permet aux membres de l'entreprise de consulter un planning, de réserver des salles et de gérer leurs réservations. L'architecture est découplée : un backend API REST en Node.js/Express et un frontend React avec un calendrier interactif.
 
 ## 🏗️ Architecture du Projet
 
-Le projet est organisé en deux parties principales :
-
 ```
-starter-kit/
-├── backend/          # API REST Node.js
-├── frontend/         # Application React
+reservations-salle/
+├── backend/          # API REST Node.js/Express 5
+├── conception/       # Documents de conception (use cases, schéma SQL)
+├── frontend/         # Application React 19 + Vite 7
 └── README.md
 ```
 
@@ -54,36 +53,54 @@ starter-kit/
 
 ```
 backend/
-├── config/           # Configuration de l'application
-│   └── db.js        # Configuration de la base de données
-├── controllers/      # Logique métier des routes
-│   └── auth.controller.js
-├── middlewares/      # Middlewares Express
-│   └── auth.middleware.js
-├── models/          # Modèles de données
-│   └── user.model.js
-├── routes/          # Définition des routes API
-│   └── auth.routes.js
-├── package.json     # Dépendances et scripts backend
-├── schema.sql       # Schéma de base de données
-├── server.js        # Point d'entrée du serveur
-└── vite.config.js   # Configuration Vite (si nécessaire)
+├── config/
+│   └── db.js                      # Pool de connexions MySQL2
+├── controllers/
+│   ├── auth.controller.js         # Logique inscription / connexion
+│   └── reservation.controller.js  # Logique CRUD des réservations
+├── middlewares/
+│   └── auth.middleware.js         # Vérification du token JWT
+├── models/
+│   ├── user.model.js              # Modèle utilisateur
+│   └── reservation.model.js       # Modèle réservation
+├── routes/
+│   ├── auth.routes.js             # Routes /api/auth
+│   └── reservation.routes.js      # Routes /api/reservations
+├── package.json
+└── server.js                      # Point d'entrée Express
 ```
 
 ### Technologies Backend
 
-- **Node.js** : Environnement d'exécution JavaScript
-- **Express** : Framework web pour Node.js
-- **Base de données** : MySQL/PostgreSQL (selon schema.sql)
-- **Authentification** : JWT (JSON Web Tokens)
+| Technologie | Version | Rôle |
+|---|---|---|
+| **Node.js** | v16+ | Environnement d'exécution |
+| **Express** | ^5.2.1 | Framework HTTP / REST |
+| **mysql2** | ^3.16.3 | Client MySQL (Promise, pool) |
+| **jsonwebtoken** | ^9.0.3 | Authentification JWT |
+| **bcrypt** | ^6.0.0 | Hachage des mots de passe |
+| **cors** | ^2.8.6 | Gestion du Cross-Origin |
+| **dotenv** | ^17.2.4 | Variables d'environnement |
+
+### Configuration `.env` (backend)
+
+```env
+PORT=5000
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=
+DB_NAME=reservations_salle
+JWT_SECRET=your_secret_key
+NODE_ENV=development
+```
 
 ### Responsabilités
 
-- **config/** : Centralise les configurations (DB, variables d'environnement)
-- **controllers/** : Contient la logique métier pour chaque route
-- **middlewares/** : Fonctions intermédiaires pour valider, authentifier, etc.
-- **models/** : Définit les modèles de données et interactions avec la DB
-- **routes/** : Définit les endpoints API et associe les controllers
+- **config/db.js** : Pool de connexions MySQL2 (limite 10), wrapper `query()` et `testConnection()`
+- **controllers/** : Logique métier — authentification et CRUD réservations
+- **middlewares/auth.middleware.js** : Vérifie et décode le token JWT dans l'en-tête `Authorization`
+- **models/** : Requêtes SQL et interactions avec la base de données
+- **routes/** : Déclaration des endpoints et branchement sur les controllers
 
 ---
 
@@ -93,177 +110,109 @@ backend/
 
 ```
 frontend/
-├── public/              # Fichiers statiques
+├── public/
+│   └── assets/img/          # Images statiques
 ├── src/
-│   ├── assets/          # Images, fonts, etc.
-│   ├── components/      # Composants React réutilisables
+│   ├── assets/icons/        # Icônes SVG
+│   ├── components/          # Composants réutilisables
+│   │   ├── Calendar.jsx     # Calendrier FullCalendar
 │   │   ├── Footer.jsx
 │   │   ├── Header.jsx
-│   │   └── PrivateRoute.jsx
-│   ├── contexts/        # Contextes React (state global)
-│   │   └── AuthContext.jsx
-│   ├── hooks/           # Hooks personnalisés
-│   │   └── useAuth.js
-│   ├── layouts/         # Layouts de pages
-│   │   ├── AuthLayout.jsx
-│   │   └── MainLayout.jsx
-│   ├── pages/           # Pages de l'application
-│   │   ├── Dashboard.jsx
-│   │   ├── Home.jsx
-│   │   ├── Login.jsx
-│   │   └── Register.jsx
-│   ├── services/        # Services API
-│   │   └── api.js
-│   ├── App.jsx          # Composant principal
-│   ├── main.jsx         # Point d'entrée React
-│   └── index.css        # Styles globaux
-├── eslint.config.js     # Configuration ESLint
-├── index.html           # Template HTML
-└── package.json         # Dépendances et scripts frontend
+│   │   └── PrivateRoute.jsx # Protection des routes authentifiées
+│   ├── contexts/
+│   │   └── AuthContext.jsx  # État d'authentification global
+│   ├── hooks/
+│   │   └── useAuth.js       # Accès simplifié à AuthContext
+│   ├── layouts/
+│   │   ├── AuthLayout.jsx   # Layout connexion / inscription
+│   │   └── MainLayout.jsx   # Layout principal (Header + Footer)
+│   ├── pages/
+│   │   ├── Home.jsx         # Page d'accueil
+│   │   ├── Login.jsx        # Connexion
+│   │   ├── Register.jsx     # Inscription
+│   │   ├── Planning.jsx     # Planning / calendrier des réservations
+│   │   └── Profil.jsx       # Profil utilisateur
+│   ├── services/
+│   │   └── api.js           # Appels HTTP vers l'API backend
+│   ├── App.jsx
+│   ├── main.jsx
+│   └── index.css
+├── eslint.config.js
+├── index.html
+└── package.json
 ```
 
 ### Technologies Frontend
 
-- **React** : Bibliothèque UI
-- **React Router** : Navigation entre pages
-- **Context API** : Gestion d'état global
-- **Vite** : Build tool et dev server
-- **ESLint** : Linting du code
+| Technologie | Version | Rôle |
+|---|---|---|
+| **React** | ^19.2.0 | Bibliothèque UI |
+| **React Router DOM** | ^7.13.0 | Routing côté client |
+| **Vite** | ^7.3.1 | Build tool et dev server |
+| **TailwindCSS** | ^4.1.18 | Styles utilitaires |
 
 ### Architecture Frontend
 
 #### Composants (`components/`)
 
-Composants réutilisables :
-
-- **Header** : En-tête de l'application
+- **Calendar** : Affiche le planning des réservations via FullCalendar (vue grille horaire et multi-mois)
+- **Header** : Barre de navigation (liens + état de connexion)
 - **Footer** : Pied de page
-- **PrivateRoute** : Protection des routes authentifiées
+- **PrivateRoute** : Redirige vers Login si l'utilisateur n'est pas authentifié
 
 #### Contextes (`contexts/`)
 
-- **AuthContext** : Gère l'état d'authentification globale
+- **AuthContext** : Fournit `user`, `token`, `login()` et `logout()` à toute l'application
 
 #### Hooks (`hooks/`)
 
-- **useAuth** : Hook personnalisé pour accéder au contexte d'authentification
+- **useAuth** : Raccourci `useContext(AuthContext)`
 
 #### Layouts (`layouts/`)
 
-- **AuthLayout** : Layout pour pages d'authentification (Login, Register)
-- **MainLayout** : Layout principal avec Header et Footer
+- **AuthLayout** : Enveloppe les pages Login et Register
+- **MainLayout** : Enveloppe les pages protégées avec Header et Footer
 
 #### Pages (`pages/`)
 
 - **Home** : Page d'accueil publique
-- **Login** : Page de connexion
-- **Register** : Page d'inscription
-- **Dashboard** : Page protégée pour utilisateurs connectés
+- **Login** : Formulaire de connexion
+- **Register** : Formulaire d'inscription
+- **Planning** : Calendrier interactif des réservations (route protégée)
+- **Profil** : Informations et réservations de l'utilisateur connecté
 
 #### Services (`services/`)
 
-- **api.js** : Configuration Axios et appels API vers le backend
+- **api.js** : Fonctions fetch vers le backend, gestion du token JWT dans les en-têtes
 
 ---
 
 ## 🔐 Système d'Authentification
 
-### Flow d'authentification
-
-1. **Inscription** :
-   - L'utilisateur remplit le formulaire Register
-   - Le frontend envoie les données à `/api/auth/register`
-   - Le backend crée l'utilisateur et retourne un token JWT
-
-2. **Connexion** :
-   - L'utilisateur se connecte via Login
-   - Le backend vérifie les credentials et retourne un token JWT
-   - Le token est stocké (localStorage/sessionStorage)
-
-3. **Accès aux routes protégées** :
-   - Le middleware `auth.middleware.js` vérifie le token JWT
-   - Le composant `PrivateRoute` protège les pages frontend
-   - L'`AuthContext` partage l'état d'authentification
-
----
-
-## 🚀 Installation et Lancement
-
-### Prérequis
-
-- Node.js (v16+)
-- npm ou yarn
-- Base de données (MySQL/PostgreSQL)
-
-### Installation
-
-```bash
-# Cloner le projet
-git clone <repository-url>
-cd starter-kit
-
-# Installer les dépendances backend
-cd backend
-npm install
-
-# Installer les dépendances frontend
-cd ../frontend
-npm install
-```
-
-### Configuration
-
-1. **Backend** : Créer un fichier `.env` dans `/backend`
-
-```env
-PORT=5000
-DATABASE_URL=your_database_url
-JWT_SECRET=your_secret_key
-```
-
-2. **Frontend** : Créer un fichier `.env` dans `/frontend`
-
-```env
-VITE_API_URL=http://localhost:5000
-```
-
-3. **Base de données** : Exécuter le schéma SQL
-
-```bash
-# Dans le dossier backend
-mysql -u username -p database_name < schema.sql
-# ou pour PostgreSQL
-psql -U username -d database_name -f schema.sql
-```
-
-### Lancement
-
-```bash
-# Terminal 1 - Backend
-cd backend
-npm run dev
-
-# Terminal 2 - Frontend  
-cd frontend
-npm run dev
-```
-
-L'application sera accessible à :
-
-- Frontend : `http://localhost:5173` (port Vite par défaut)
-- Backend : `http://localhost:5000` (ou port configuré)
+1. **Inscription** : formulaire Register → `POST /api/auth/register` → création du compte en BD + token JWT retourné
+2. **Connexion** : formulaire Login → `POST /api/auth/login` → vérification des credentials + token JWT stocké côté client
+3. **Routes protégées** : `auth.middleware.js` valide le token JWT sur chaque requête privée ; `PrivateRoute` protège les pages React
 
 ---
 
 ## 📡 API Endpoints
 
-### Authentification
+### Authentification (`/api/auth`)
 
-| Méthode | Endpoint             | Description                         | Protection |
-| ------- | -------------------- | ----------------------------------- | ---------- |
-| POST    | `/api/auth/register` | Inscription d'un nouvel utilisateur | Public     |
-| POST    | `/api/auth/login`    | Connexion utilisateur               | Public     |
-| GET     | `/api/auth/profile`  | Récupérer le profil utilisateur     | Privé      |
+| Méthode | Endpoint | Description | Protection |
+|---------|----------|-------------|------------|
+| POST | `/api/auth/register` | Inscription d'un nouvel utilisateur | Public |
+| POST | `/api/auth/login` | Connexion utilisateur | Public |
+| GET | `/api/auth/profile` | Récupérer le profil utilisateur | Privé (JWT) |
+
+### Réservations (`/api/reservations`)
+
+| Méthode | Endpoint | Description | Protection |
+|---------|----------|-------------|------------|
+| GET | `/api/reservations` | Lister toutes les réservations | Privé (JWT) |
+| POST | `/api/reservations` | Créer une réservation | Privé (JWT) |
+| PUT | `/api/reservations/:id` | Modifier une réservation | Privé (JWT) |
+| DELETE | `/api/reservations/:id` | Supprimer une réservation | Privé (JWT) |
 
 ---
 
@@ -273,15 +222,15 @@ L'application sera accessible à :
 
 ```bash
 npm start        # Lancer le serveur en production
-npm run dev      # Lancer le serveur en mode développement
+npm run dev      # Lancer avec node --watch (rechargement auto)
 ```
 
 ### Frontend
 
 ```bash
-npm run dev      # Lancer le serveur de développement
+npm run dev      # Serveur de développement Vite
 npm run build    # Build de production
-npm run preview  # Preview du build
+npm run preview  # Prévisualiser le build
 npm run lint     # Vérifier le code avec ESLint
 ```
 
@@ -291,32 +240,31 @@ npm run lint     # Vérifier le code avec ESLint
 
 ### Backend
 
-- express
-- mysql2 / pg (selon la DB)
-- jsonwebtoken
-- bcrypt
-- cors
-- dotenv
+- `express` ^5.2.1
+- `mysql2` ^3.16.3
+- `jsonwebtoken` ^9.0.3
+- `bcrypt` ^6.0.0
+- `cors` ^2.8.6
+- `dotenv` ^17.2.4
 
 ### Frontend
 
-- react
-- react-router-dom
-- axios
-
+- `react` ^19.2.0
+- `react-router-dom` ^7.13.0
+- `tailwindcss` ^4.1.18
 ---
 
 ## 🎯 Bonnes Pratiques
 
-1. **Séparation des préoccupations** : Backend et frontend totalement découplés
-2. **Architecture MVC** : Models, Controllers, Routes bien séparés
-3. **Composants réutilisables** : Components React modulaires
-4. **State Management** : Context API pour l'état global
-5. **Sécurité** : JWT pour l'authentification, middlewares de validation
-6. **Code propre** : ESLint pour la qualité du code
+1. **Architecture découplée** : Backend et frontend totalement indépendants
+2. **Architecture MVC** : Models, Controllers et Routes clairement séparés
+3. **Composants réutilisables** : Calendar, Header, Footer, PrivateRoute
+4. **State Management** : Context API pour l'état d'authentification global
+5. **Sécurité** : JWT + bcrypt, middleware de validation sur toutes les routes privées
+6. **Performance** : Pool de connexions MySQL, ES Modules natifs, Vite pour le bundling
 
 ---
 
 ## 📝 Licence
 
-Ce projet est un starter kit pour un développement rapide d'applications fullstack.
+Projet de réservation de salles — développé dans le cadre d'un usage interne entreprise.
